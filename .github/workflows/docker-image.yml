@@ -17,7 +17,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
@@ -27,8 +27,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ vars.DOCKERHUB_USERNAME }}/cardcircle:hub
-            ${{ vars.DOCKERHUB_USERNAME }}/cardcircle:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/cardcircle:hub
+            ${{ secrets.DOCKERHUB_USERNAME }}/cardcircle:latest
 
   deploy:
     needs: build-and-push
@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ vars.DOCKERHUB_USERNAME }}/cardcircle:hub
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cardcircle:hub
             docker rm -f cardcircle_auth || true
             docker run -d \
               --name cardcircle_auth \
@@ -49,4 +49,4 @@ jobs:
               -e SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/cardcircle?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC" \
               -e SPRING_DATASOURCE_USERNAME=root \
               -e SPRING_DATASOURCE_PASSWORD=root \
-              ${{ vars.DOCKERHUB_USERNAME }}/cardcircle:hub
+              ${{ secrets.DOCKERHUB_USERNAME }}/cardcircle:hub
