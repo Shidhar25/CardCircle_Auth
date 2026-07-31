@@ -41,10 +41,9 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            curl -fsSL https://get.docker.com | sudo sh
+            sudo yum install -y docker
             sudo systemctl enable docker
             sudo systemctl start docker
-            sudo usermod -aG docker ${{ secrets.EC2_USERNAME }} || true
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cardcircle:hub
             sudo docker rm -f cardcircle_auth || true
             sudo docker run -d \
