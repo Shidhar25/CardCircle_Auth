@@ -2,7 +2,7 @@ name: Run -> checkout -> Docker-hub -> AWS EC2
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   build-and-push:
