@@ -44,6 +44,16 @@ jobs:
             sudo yum install -y docker
             sudo systemctl enable docker
             sudo systemctl start docker
+            sudo docker volume create mysql-data
+            sudo docker rm -f mysql-db || true
+            sudo docker run -d \
+              --name mysql-db \
+              -e MYSQL_ROOT_PASSWORD=root \
+              -e MYSQL_DATABASE=cardcircle \
+              -p 3306:3306 \
+              -v mysql-data:/var/lib/mysql \
+              mysql:8.0
+            sleep 30
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cardcircle:hub
             sudo docker rm -f cardcircle_auth || true
             sudo docker run -d \
